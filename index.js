@@ -5,11 +5,15 @@ const express = require('express');
 const app = express();
 const cors = require("cors");
 
-const port = process.env.PORT
+const port = process.env.PORT;
+
+// API Routes impport
+const userRoute = require('./routes/User');
 
 // middleware setup
 // Cross Origin Resource Sharing Setup
-app.use(cors())
+app.use(cors());
+app.use("/api/user", userRoute);
 
 // Desc: default route
 // Method: GET
@@ -23,7 +27,7 @@ app.get(
       message: "Default API Route."
     });
   }
-)
+);
 
 
 // Start web server
