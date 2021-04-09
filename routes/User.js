@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router()
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { check, validationResult  } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 const token_key = process.env.TOKEN_KEY;
 
 // import user model
@@ -25,6 +25,89 @@ router.get(
     return res.status(200).json({
       status: true,
       message: "Default User API Route."
+    });
+  }
+);
+
+
+// Desc: Register User API Route
+// Method: POST
+// Access: Public
+// URL: /api/user/register
+router.post(
+  "/register",
+  [
+    check("username").not().isEmpty().withMessage("Please enter your username.").trim().escape(),
+    check("password").not().isEmpty().withMessage("Please enter your password.").trim().escape(),
+    check("password1").not().isEmpty().withMessage("Please enter your re-type password.").trim().escape(),
+    check("email").isEmail().normalizeEmail().withMessage("Please enter valid email.")
+
+  ],
+  (req, res) => {
+
+    // check validation errors
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      let error = {};
+
+      for (index = 0; index < errors.array().length; index++) {
+        error = {
+          ...error,
+          [errors.array()[index].param]: errors.array()[index].msg
+        }
+      }
+
+      return res.status(400).json({
+        status: false,
+        message: "form validation error.",
+        error: error
+      });
+    }
+
+    // check password = password1
+    if (req.body.password != req.body.password1) {
+      return res.status(400).json({
+        status: false,
+        message: "form validation error.",
+        error: {
+          password1: "Re-type password is same as password."
+        }
+      });
+    }
+
+    // check if email already exists
+    User.findOne({ email: req.body.email }).then(user => {
+
+      // if user email exists
+      if (user) {
+        return res.status(400).json({
+          status: true,
+          message: "User already exists.",
+          error: {
+            email: "Email already exists."
+          }
+        });
+      } else {
+        // password hashing
+        let salt = bcrypt.genSaltSync(10);
+        let hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+        return res.status(200).json({
+          status: true,
+          message: "Default User API Route.",
+          password: hashedPassword
+        });
+      }
+
+    }).catch(error => {
+      return res.status(502).json({
+        status: true,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
     });
   }
 );
