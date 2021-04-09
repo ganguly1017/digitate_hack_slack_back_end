@@ -7,6 +7,8 @@ const cors = require("cors");
 
 const port = process.env.PORT;
 
+const database = require('./database');
+
 // API Routes impport
 const userRoute = require('./routes/User');
 
