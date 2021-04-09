@@ -82,7 +82,7 @@ router.post(
       // if user email exists
       if (user) {
         return res.status(400).json({
-          status: true,
+          status: false,
           message: "User already exists.",
           error: {
             email: "Email already exists."
@@ -105,11 +105,15 @@ router.post(
           return res.status(200).json({
             status: true,
             message: "User register success.",
-            user: user
+            user: {
+              id: user._id,
+              username: user.username,
+              email: user.email
+            }
           });
         }).catch(error => {
           return res.status(502).json({
-            status: true,
+            status: false,
             message: "Database error.",
             error: {
               db_error: "Some error in database."
@@ -120,7 +124,90 @@ router.post(
 
     }).catch(error => {
       return res.status(502).json({
-        status: true,
+        status: false,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
+    });
+  }
+);
+
+
+// Desc: Login user API Route
+// Method: POST
+// Access: Public
+// URL: /api/user/login
+router.post(
+  "/login",
+  [
+    check("password").not().isEmpty().withMessage("Please enter your password.").trim().escape(),
+    check("email").isEmail().normalizeEmail().withMessage("Please enter valid email.")
+  ],
+  (req, res) => {
+
+    // check validation errors
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      let error = {};
+
+      for (index = 0; index < errors.array().length; index++) {
+        error = {
+          ...error,
+          [errors.array()[index].param]: errors.array()[index].msg
+        }
+      }
+
+      return res.status(400).json({
+        status: false,
+        message: "form validation error.",
+        error: error
+      });
+    }
+
+
+     // check if email already exists
+     User.findOne({ email: req.body.email }).then(user => {
+
+      // if user email not exists
+      if (!user) {
+        return res.status(400).json({
+          status: false,
+          message: "User not exists.",
+          error: {
+            email: "Email not exists."
+          }
+        });
+      } else {
+        // match user password
+        let isPasswordMatch = bcrypt.compareSync(req.body.password, user.password)
+        
+        if (!isPasswordMatch){
+          return res.status(400).json({
+            status: false,
+            message: "Password not matched",
+            error: {
+              password: "Password not match in database."
+            }
+          });
+        }
+
+        return res.status(200).json({
+          status: true,
+          message: "User login success.",
+          user: {
+            id: user._id,
+            username: user.username,
+            email: user.email
+          }
+        });
+      }
+
+    }).catch(error => {
+      return res.status(502).json({
+        status: false,
         message: "Database error.",
         error: {
           db_error: "Some error in database."
