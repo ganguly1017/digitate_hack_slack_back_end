@@ -93,10 +93,28 @@ router.post(
         let salt = bcrypt.genSaltSync(10);
         let hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-        return res.status(200).json({
-          status: true,
-          message: "Default User API Route.",
+
+        // Save new user into database
+        const newUser = new User({
+          username: req.body.username,
+          email: req.body.email,
           password: hashedPassword
+        })
+
+        newUser.save().then(user => {
+          return res.status(200).json({
+            status: true,
+            message: "User register success.",
+            user: user
+          });
+        }).catch(error => {
+          return res.status(502).json({
+            status: true,
+            message: "Database error.",
+            error: {
+              db_error: "Some error in database."
+            }
+          });
         });
       }
 
