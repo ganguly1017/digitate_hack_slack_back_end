@@ -28,6 +28,31 @@ router.get(
   }
 );
 
+// Desc: get all team names api route
+// Method: GET
+// Access: Public
+// URL: /api/team/all
+router.get(
+  "/all",
+  (req, res) => {
+    Team.find({}, { _id: 0, __v: 0, createdAt: 0 }).populate("user", ["username"]).then(teams => {
+      return res.status(200).json({
+        status: true,
+        message: "All team data",
+        teams: teams
+      });
+    }).catch(err => {
+      return res.status(502).json({
+        status: false,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
+    });
+  }
+);
+
 
 // Desc: Create new team API Route
 // Method: POST
@@ -39,7 +64,7 @@ router.post(
   [
     check("name").not().isEmpty().withMessage("Please enter team name.").trim().escape(),
     check("description").not().isEmpty().withMessage("Please enter description.").trim().escape()
-  
+
   ],
   (req, res) => {
 
