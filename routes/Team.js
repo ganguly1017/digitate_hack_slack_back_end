@@ -53,6 +53,32 @@ router.get(
   }
 );
 
+// Desc: get all team of a user api route
+// Method: GET
+// Access: Private
+// URL: /api/team/my
+router.get(
+  "/my",
+  verifyToken,
+  (req, res) => {
+    Team.find({ user: req.user.id }, { _id: 0, __v: 0, createdAt: 0 }).populate("user", ["username"]).then(teams => {
+      return res.status(200).json({
+        status: true,
+        message: "User all team data.",
+        teams: teams
+      });
+    }).catch(err => {
+      return res.status(502).json({
+        status: false,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
+    });
+  }
+);
+
 
 // Desc: Create new team API Route
 // Method: POST
