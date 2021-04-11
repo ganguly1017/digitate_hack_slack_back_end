@@ -1,7 +1,7 @@
 // library include
 const jwt = require('jsonwebtoken');
 const User = require('./../models/User');
-const token_key = process.emitWarning.TOKEN_KEY;
+const token_key = process.env.TOKEN_KEY;
 
 function verifyToken(req, res, next){
   // get token from http header

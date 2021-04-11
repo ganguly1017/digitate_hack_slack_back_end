@@ -11,11 +11,13 @@ const database = require('./database');
 
 // API Routes impport
 const userRoute = require('./routes/User');
+const teamRoute = require('./routes/Team');
 
 // middleware setup
 // Cross Origin Resource Sharing Setup
 app.use(cors());
 app.use("/api/user", userRoute);
+app.use("/api/team", teamRoute);
 
 // Desc: default route
 // Method: GET
