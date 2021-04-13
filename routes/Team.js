@@ -61,7 +61,7 @@ router.get(
   "/my",
   verifyToken,
   (req, res) => {
-    Team.find({ user: req.user.id }, { _id: 0, __v: 0, createdAt: 0 }).populate("user", ["username"]).then(teams => {
+    Team.find({ user: req.user.id }, { __v: 0, createdAt: 0 }).populate("user", ["username"]).then(teams => {
       return res.status(200).json({
         status: true,
         message: "User all team data.",
