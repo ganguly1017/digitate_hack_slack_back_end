@@ -7,7 +7,7 @@ const verifyToken = require('./../middlewares/verify_token');
 // import user model
 const User = require('./../models/User');
 const Team = require('./../models/Team');
-const Chat = require('./../models/Chat')
+const Chat = require('./../models/Chat');
 
 
 // middleware setup
