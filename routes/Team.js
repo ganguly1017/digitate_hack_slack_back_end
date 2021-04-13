@@ -146,6 +146,43 @@ router.post(
 );
 
 
+// Desc: GET Team Details API Roue
+// Method: POST
+// Access: Public
+// URL: /api/team/getTeam
+router.post(
+  "/getTeam/:teamID",
+  (req, res) => {
+
+    const teamID = req.params.teamID;
+
+    Team.findById(teamID, {createdAt: 0, __v: 0, }).populate("user", ["username"]).then(team => {
+      if (team) {
+        return res.status(200).json({
+          status: true,
+          message: "Team data retrieved",
+          team: team
+        });
+      } else {
+        return res.status(404).json({
+          status: true,
+          message: "Team data not retrieved",
+        });
+      }
+    }).catch(err => {
+      return res.status(502).json({
+        status: false,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
+    });
+
+  }
+);
+
+
 module.exports = router;
 
 

@@ -41,38 +41,29 @@ router.post(
 
     const userID = req.params.userID;
 
-    if (userID != '') {
-      User.findById(userID, { password: 0, email: 0, __v: 0 }).then(user => {
-        if (user) {
-          return res.status(200).json({
-            status: true,
-            message: "User data retrieved",
-            user: user
-          });
-        } else {
-          return res.status(404).json({
-            status: true,
-            message: "User data not retrieved",
-          });
-        }
-      }).catch(err => {
-        return res.status(502).json({
-          status: false,
-          message: "Database error.",
-          error: {
-            db_error: "Some error in database."
-          }
+    User.findById(userID, { password: 0, email: 0, __v: 0 }).then(user => {
+      if (user) {
+        return res.status(200).json({
+          status: true,
+          message: "User data retrieved",
+          user: user
         });
-      });
-    } else {
-      return res.status(400).json({
+      } else {
+        return res.status(404).json({
+          status: true,
+          message: "User data not retrieved",
+        });
+      }
+    }).catch(err => {
+      return res.status(502).json({
         status: false,
-        message: "user id not provided",
+        message: "Database error.",
         error: {
-          user_id: "User id not provided."
+          db_error: "Some error in database."
         }
       });
-    }
+    });
+
   }
 );
 
