@@ -35,7 +35,7 @@ router.get(
 router.get(
   "/all",
   (req, res) => {
-    Team.find({}, { _id: 0, __v: 0, createdAt: 0 }).populate("user", ["username"]).then(teams => {
+    Team.find({}, { __v: 0, createdAt: 0 }).populate("user", ["username"]).then(teams => {
       return res.status(200).json({
         status: true,
         message: "All team data",
