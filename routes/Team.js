@@ -126,6 +126,7 @@ router.post(
         status: true,
         message: "New team created successfully...",
         team: {
+          id: team._id,
           name: team.name,
           description: team.description,
           user_id: team.user
