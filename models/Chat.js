@@ -11,7 +11,11 @@ const Chat = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'teams'
   },
-  user: {
+  from: {
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+  },
+  to: {
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
