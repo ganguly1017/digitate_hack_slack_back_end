@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const moment = require('moment');
 
-const Team = new Schema({
-  name: {
+const Chat = new Schema({
+  message: {
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: true
+  team: {
+    type: Schema.Types.ObjectId,
+    ref: 'teams'
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -21,8 +21,8 @@ const Team = new Schema({
   }
 });
 
-// Create Team model
-mongoose.model("teams", Team)
+// Create Chat model
+mongoose.model("chats", Chat)
 
-// export Team model
-module.exports = mongoose.model("teams");
+// export Chat model
+module.exports = mongoose.model("chats");
