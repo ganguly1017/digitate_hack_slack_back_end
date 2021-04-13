@@ -8,6 +8,7 @@ const token_key = process.env.TOKEN_KEY;
 
 // import user model
 const User = require('./../models/User');
+const verifyToken = require('../middlewares/verify_token');
 
 
 // middleware setup
@@ -28,6 +29,53 @@ router.get(
     });
   }
 );
+
+// Desc: get single user data
+// Method: POST
+// Access: Private
+// URL: /api/user/getUser/:userID
+router.post(
+  "/getUser/:userID",
+  verifyToken,
+  (req, res) => {
+
+    const userID = req.params.userID;
+
+    if (userID != '') {
+      User.findById(userID, { password: 0, email: 0, __v: 0 }).then(user => {
+        if (user) {
+          return res.status(200).json({
+            status: true,
+            message: "User data retrieved",
+            user: user
+          });
+        } else {
+          return res.status(404).json({
+            status: true,
+            message: "User data not retrieved",
+          });
+        }
+      }).catch(err => {
+        return res.status(502).json({
+          status: false,
+          message: "Database error.",
+          error: {
+            db_error: "Some error in database."
+          }
+        });
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "user id not provided",
+        error: {
+          user_id: "User id not provided."
+        }
+      });
+    }
+  }
+);
+
 
 
 // Desc: Register User API Route
@@ -168,8 +216,8 @@ router.post(
     }
 
 
-     // check if email already exists
-     User.findOne({ email: req.body.email }).then(user => {
+    // check if email already exists
+    User.findOne({ email: req.body.email }).then(user => {
 
       // if user email not exists
       if (!user) {
@@ -183,8 +231,8 @@ router.post(
       } else {
         // match user password
         let isPasswordMatch = bcrypt.compareSync(req.body.password, user.password)
-        
-        if (!isPasswordMatch){
+
+        if (!isPasswordMatch) {
           return res.status(400).json({
             status: false,
             message: "Password not matched",

@@ -43,7 +43,7 @@ router.post(
     check("to").not().isEmpty().withMessage("Please provide to_id.").trim().escape(),
   ],
   (req, res) => {
-    
+
     // check validation errors
     const errors = validationResult(req);
 
@@ -81,6 +81,59 @@ router.post(
 
     }).catch(err => {
       console.log(err)
+      return res.status(502).json({
+        status: false,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
+    });
+  }
+);
+
+
+
+// Desc: get user detial in a chat team api route
+// Method: POST
+// Access: Private
+// URL: /api/chat/getTeamUser
+router.post(
+  "/getTeamUser",
+  verifyToken,
+  [
+    check("team").not().isEmpty().withMessage("Please enter team id").trim().escape()
+  ],
+  (req, res) => {
+
+    // check validation errors
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      let error = {};
+
+      for (index = 0; index < errors.array().length; index++) {
+        error = {
+          ...error,
+          [errors.array()[index].param]: errors.array()[index].msg
+        }
+      }
+
+      return res.status(400).json({
+        status: false,
+        message: "form validation error.",
+        error: error
+      });
+    }
+
+    // get all chat team user
+    Chat.find({ team: req.body.team }).distinct("from").then(users => {
+      return res.status(200).json({
+        status: true,
+        message: "Team user id retreived...",
+        users: users
+      });
+    }).catch(err => {
       return res.status(502).json({
         status: false,
         message: "Database error.",
