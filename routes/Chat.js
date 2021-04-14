@@ -39,8 +39,7 @@ router.post(
   verifyToken,
   [
     check("message").not().isEmpty().withMessage("Please enter message").trim().escape(),
-    check("team").not().isEmpty().withMessage("Please provide team_id.").trim().escape(),
-    check("to").not().isEmpty().withMessage("Please provide to_id.").trim().escape(),
+    check("team").not().isEmpty().withMessage("Please provide team_id.").trim().escape()
   ],
   (req, res) => {
 
@@ -68,7 +67,6 @@ router.post(
     const newChat = new Chat({
       message: req.body.message,
       team: req.body.team,
-      to: req.body.to,
       from: req.user.id
     })
 
@@ -80,7 +78,6 @@ router.post(
       });
 
     }).catch(err => {
-      console.log(err)
       return res.status(502).json({
         status: false,
         message: "Database error.",

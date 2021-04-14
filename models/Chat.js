@@ -15,10 +15,6 @@ const Chat = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
-  to: {
-    type: Schema.Types.ObjectId,
-    ref: 'users'
-  },
   createdAt: {
     type: String,
     default: moment().format("DD/MM/YYYY") + ";" + moment().format("hh:mm:ss")
