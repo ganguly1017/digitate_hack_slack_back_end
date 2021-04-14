@@ -143,6 +143,36 @@ router.post(
 );
 
 
+// Desc: get all chat message of a team
+// Method: POST
+// Access: Private
+// URL: /api/chat/getMessages
+router.post(
+  "/getMessages/:teamID",
+  verifyToken,
+  (req, res) => {
+    const teamID = req.params.teamID;
+
+    // get all chat messsage of a team
+    Chat.find({ team: teamID }).populate("from", ["username"]).then(messages => {
+      return res.status(200).json({
+        status: true,
+        message: "Messages retreived...",
+        messages: messages
+      });
+    }).catch(err => {
+      return res.status(502).json({
+        status: false,
+        message: "Database error.",
+        error: {
+          db_error: "Some error in database."
+        }
+      });
+    });
+  }
+);
+
+
 module.exports = router;
 
 
