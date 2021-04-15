@@ -242,7 +242,7 @@ router.post(
           },
           token_key,
           {
-            expiresIn: 3600
+            expiresIn: 10800
           }
         );
 
